@@ -10,7 +10,7 @@ $pokemonApi = new PokeApi;
 $pokemonFirstGeneration = getFirstGeneration();
 
 $totalPokemon = count($pokemonFirstGeneration);
-$perPage = 8;
+$perPage = 12;
 $totalPages = ceil($totalPokemon / $perPage);
 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -20,6 +20,7 @@ $start = ($page - 1) * $perPage;
 $pokemonPage = array_slice($pokemonFirstGeneration, $start, $perPage);
 
 $pokemonPhotos = [];
+
 
 
 foreach ($pokemonPage as $pokemon) {
@@ -46,34 +47,73 @@ foreach ($pokemonPage as $pokemon) {
 
 <body class="background-image">
     <div class="row container-lg justify-content-center mx-auto">
-        <div class="row mt-3 mx-3 p-0 justify-content-between">
-            <div class="col-8 align-self-center">
+        <div class="row my-3 p-0 justify-content-center align-items-center">
+            <div class="col-2 align-self-center">
                 <div class="row">
                     <img class="col-auto" src="./assets/img/International_Pokémon_logo.svg.png" alt="" style="width:150px;">
                 </div>
             </div>
-            <div class="col-4 align-self-center d-flex justify-content-end">
+            <div class="col-8 mx-auto">
+                <div class="d-flex justify-content-center">
+
+                    <div class="input-container input-group" style="width:50%;">
+                        <input id="search" type="text" class="form-control" placeholder="Rechercher" aria-label="Username" aria-describedby="basic-addon1">
+                        <span class="input-group-text" id="basic-addon1">@</span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-2 align-self-center d-flex justify-content-end">
                 <button class="btn"><img src="./assets/img/pokeball.png" style="width:30px;" alt=""></button>
             </div>
-            <div class="mt-3"></div>
-
-        </div>
-        <div class="input-container input-group" style="width:50%;">
-            <input id="search" type="text" class="form-control" placeholder="Rechercher" aria-label="Username" aria-describedby="basic-addon1">
-            <span class="input-group-text" id="basic-addon1">@</span>
         </div>
 
-        <!-- <div class="position-relative d-flex justify-content-center">
-            <div class="position-absolute row row-cols-md-4 gap-3 justify-content-center mx-auto" style="z-index:15; top:20px;">
+
+        <div class="d-flex justify-content-center mt-5">
+            <div class="row row-cols-md-6 gap-3 justify-content-center mx-auto">
                 <?php foreach ($pokemonPage as $pokemon) : ?>
-                    <div class="col-12 p-0" style="width:150px;">
-                        <div class="card border-3 border-light" style="background-color:#3B9EFF; height:200px;">
-                            <div class="card-img-overlay p-4">
-                                <h5 class="card-title"><?= $pokemon->name ?></h5>
-                                <img class="w-100" src="<?= $pokemonPhotos[$pokemon->name] ?>">
+                    <a class="position-relative col rounded-4" style="cursor:pointer;width:190px; height:280px; background-color:#ecb223;">
+                        <div class="py-3 w-100 h-100">
+                            <div class="w-100 h-100 back" style="background-image:url(./assets/img/550483-lumiere-abstraite-eclate-fond-degrade-radial-jaune-rayon-sunburst-vectoriel.jpg); background-size:cover;">
+                                <div class="row px-3 h-100">
+                                    <div class="col-12">
+                                        <div class="row align-items-center">
+                                            <div class="col-8 p-0">
+                                                <div class="row">
+                                                    <div class="col-12" style="font-size:8px;">Basic Pokemon</div>
+                                                    <div class="col-12" style="font-size:10px;"><?= $pokemon->name ?></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-4 p-0 text-end" style="font-size:10px;">40hp</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 p-0 w-100 h-50">
+                                        <div class="position-relative shadow border border-5 border-danger w-100 h-100" style="background-image:url(./assets/img/fond-card.webp); background-size:cover;">
+                                            <div class="p-3 w-100 h-100">
+
+                                                <div class="w-100 h-100" style="background-image:url(<?= $pokemonPhotos[$pokemon->name] ?>); background-size:contain; background-repeat:no-repeat; background-position:center;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row p-1 align-items-center">
+                                            <div class="col-3 text-start" style="font-size:8px;"><i class="fa-solid fa-circle"></i></div>
+                                            <div class="col-6 text-center" style="font-size:10px;">Attack</div>
+                                            <div class="col-3 text-end" style="font-size:12px;">50</div>
+                                            <hr>
+                                        </div>
+                                        <div class="row p-1 align-items-center">
+                                            <div class="col-3 text-start" style="font-size:8px;"><i class="fa-solid fa-circle"></i></div>
+                                            <div class="col-6 text-center" style="font-size:10px;">Attack</div>
+                                            <div class="col-3 text-end" style="font-size:12px;">50</div>
+                                            <hr>
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 <?php endforeach ?>
                 <nav aria-label="Page navigation example" class="mt-5">
                     <ul class="pagination justify-content-center">
@@ -93,55 +133,10 @@ foreach ($pokemonPage as $pokemon) {
                     </ul>
                 </nav>
             </div>
-        </div> -->
-    </div>
-
-    <div class="position-relative rounded-4" style="width:580px; height:800px; background-color:#ecb223;">
-        <div class="p-3 w-100 h-100">
-            <div class="w-100 h-100" style="background-image:url(./assets/img/550483-lumiere-abstraite-eclate-fond-degrade-radial-jaune-rayon-sunburst-vectoriel.jpg); background-size:cover;">
-                <div class="row px-3 h-100">
-                    <div class="col-12">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <div class="row">
-                                    <div class="col-12" style="font-size:16px;">Basic Pokemon</div>
-                                    <div class="col-12" style="font-size:24px;">Pikachu</div>
-                                </div>
-                            </div>
-                            <div class="col text-end fs-2">40hp</div>
-                        </div>
-                    </div>
-                    <div class="col-12 w-100 h-50">
-                        <div class="shadow" style="width:100%; height:100%; background-color:yellow;">
-                            <div class="p-3 w-100 h-100">
-                                <img class="w-100 h-100" src="./assets/img/pikachu-artwork-4k.jpg" alt="">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="row p-3">
-                            <div class="col-2 text-start fs-3"><i class="fa-solid fa-circle"></i></div>
-                            <div class="col-8 text-center fs-2">Attack</div>
-                            <div class="col-2 text-end fs-1">50</div>
-                            <hr>
-                        </div>
-                        <div class="row p-3">
-                            <div class="col-2 text-start fs-3"><i class="fa-solid fa-circle"></i></div>
-                            <div class="col-8 text-center fs-2">Attack</div>
-                            <div class="col-2 text-end fs-1">50</div>
-                            <hr>
-                        </div>
-                        <div class="row p-3">
-                            <div class="col-2 text-start fs-3"><i class="fa-solid fa-circle"></i></div>
-                            <div class="col-8 text-center fs-2">Attack</div>
-                            <div class="col-2 text-end fs-1">50</div>
-                            <hr>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
+
+
 </body>
 
 </html>
