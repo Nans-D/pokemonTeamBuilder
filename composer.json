@@ -1,0 +1,17 @@
+{
+    "name": "vendor/package-drive",
+    "description": "dependances de drive",
+    "type": "project",
+    "require": {
+        "monolog/monolog": "2.x-dev",
+        "danrovito/pokephp": "^1.3"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nans-D",
+            "email": "ndelaubert@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}

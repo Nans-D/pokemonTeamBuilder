@@ -1,0 +1,10 @@
+body {
+  background-color: #0d2847;
+}
+
+.background-image {
+  height: 100vh;
+  background-image: url(./img/pokemon-ball-house-anime-digital-art-4k-wallpaper-uhdpaper.com-68@1@o.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+}
