@@ -377,12 +377,12 @@ class PokeApi
     }
 }
 
-function getFirstGeneration()
+function getFirstGeneration($endpoint, $limit = null, $offset = null)
 {
     $pokeapi = new PokeApi;
     $pokemonsFirstGeneration = [];
 
-    $pokemon = $pokeapi->resourceList('pokemon', 151, 0);
+    $pokemon = $pokeapi->resourceList($endpoint, $limit);
     $pokemonsFirstGeneration[] = json_decode($pokemon);
 
     return $pokemonsFirstGeneration[0]->results;
