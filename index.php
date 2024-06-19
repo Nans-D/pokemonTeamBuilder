@@ -9,20 +9,20 @@ include './vendor/danrovito/pokephp/src/PokeApi.php';
 $pokemonApi = new PokeApi;
 $pokemonFirstGeneration = getFirstGeneration("pokemon", "151");
 
-// getColor
-
-
-
+// Pagination
 $totalPokemon = count($pokemonFirstGeneration);
 $perPage = 8;
 $totalPages = ceil($totalPokemon / $perPage);
 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $page = max(1, min($page, $totalPages));
+
 $start = ($page - 1) * $perPage;
 
 $pokemonPage = array_slice($pokemonFirstGeneration, $start, $perPage);
 
+
+// tableaux
 $pokemonPhotos = [];
 $pokemonColor = [];
 
@@ -33,9 +33,6 @@ foreach ($pokemonPage as $pokemon) {
     $pokemonColorString = json_decode($pokemonColorEncode);
     $pokemonColor[$pokemon->name] = $pokemonColorString->color->name;
 }
-
-
-
 
 ?>
 
@@ -86,10 +83,16 @@ foreach ($pokemonPage as $pokemon) {
             cursor: pointer;
 
         }
+
+        @media(min-width:1200px) {
+            .overflow-xl {
+                overflow: hidden;
+            }
+        }
     </style>
 </head>
 
-<body class="overflow-hidden h-100" style="max-height:100vh;">
+<body class="overflow-xl h-100" style="max-height:100vh;">
     <section class="py-3" style="height:40vh;">
         <div class="background-image"></div>
         <div class="container-lg row justify-content-around mx-auto">
@@ -115,8 +118,8 @@ foreach ($pokemonPage as $pokemon) {
         </div>
     </section>
 
-    <section>
-        <div class="row align-items-center">
+    <section class="container-fluid">
+        <div class="row align-items-center g-0">
             <div class="col-4">
                 <div class="fs-1 text-light text-center w-100 text-bold">FILTER</div>
                 <ul class="list-unstyled row justify-content-center flex-column mx-auto">
@@ -131,29 +134,39 @@ foreach ($pokemonPage as $pokemon) {
                     </li>
                 </ul>
 
-                <nav aria-label="Page navigation example" class="mt-5">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                            <a class="page-link" href="?page=<?= $page - 1 ?>" aria-label="Previous">
+
+                <nav class="mt-5">
+                    <ul class="row justify-content-center list-unstyled" style="gap: 10px;">
+                        <li class="col-auto li-pagination <?= ($page <= 1) ? 'disabled' : '' ?>">
+                            <a class="" href="?page=<?= $page - 1 ?>" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
                         <?php for ($i = 1; $i <= 4; $i++) : ?>
-                            <li class="page-item <?= ($i == $page) ? 'active' : '' ?>"><a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a></li>
+                            <li class="col-auto li-pagination <?= ($i == $page) ? 'active' : '' ?>">
+                                <a data-page="<?= $i ?>" class=" page-switch" type="button" href="?page=<?= $i ?>">
+                                    <?= $i ?>
+                                </a>
+                            </li>
                         <?php endfor ?>
-                        <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
-                            <a class="page-link" href="?page=<?= $page + 1 ?>" aria-label="Next">
+                        <input id="input-pagination" type="text" class="col-auto li-pagination border border-none" name="" id="">
+                        <li class="col-auto li-pagination <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
+                            <a class="" href="?page=<?= $page + 1 ?>" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
+                        <button id="button-pagination" data-page disabled class="col-auto btn btn-primary">Go</button>
                     </ul>
                 </nav>
             </div>
-            <div class="col-8">
-                <div class=" row gy-3 justify-content-center mx-auto align-content-center" style="height:60vh;">
+            <div class="col-8 position-relative">
+                <div id="spinner" class="d-none position-absolute top-50 start-50 translate-middle z-1">
+                    <img src="./assets/img/pokeball.png" alt="Pokéball" class="spin-pokeball" style="width:120px;">
+                </div>
+                <div id="printPokemonNewPage" class="row row-cols-4 gy-3 justify-content-center mx-auto align-content-center" style="height:60vh;">
                     <?php foreach ($pokemonPage as $pokemon) { ?>
 
-                        <div class="col-auto">
+                        <div class="col-3">
                             <div class="position-relative rounded-5 card-pokemon" style="width:200px; height:250px;background: rgb(13,21,32);background: linear-gradient(331deg, rgba(13,21,32,1) 0%, rgba(0,51,98,1) 100%);">
                                 <div class="text-light text-center pt-2"><?= ucfirst($pokemon->name) ?></div>
                                 <div class="position-absolute top-50 start-50 translate-middle" style="height: 170px;width: 170px;background: rgb(13,21,32);background: radial-gradient(circle, rgba(13,21,32,1) 0%, rgba(16,77,135,1) 0%, rgba(13,21,32,1) 100%);border-radius: 50%;display: inline-block;border:2px solid <?= $pokemonColor[$pokemon->name]; ?>;">
@@ -161,27 +174,66 @@ foreach ($pokemonPage as $pokemon) {
                                         <img class="object-fit-contain" style="width:100%;" src="<?= $pokemonPhotos[$pokemon->name] ?>" alt="">
                                     </div>
                                 </div>
+                                <a id="modal" type="button" class="stretched-link" data-bs-toggle="modal" data-bs-target="#exampleModal"></a>
                             </div>
+
                         </div>
                     <?php } ?>
                 </div>
             </div>
+        </div>
     </section>
 
-
-
-
-
+    <?php require_once('./modalPokemon.php') ?>
     <script>
         $(document).ready(function() {
             $('.filter-button').on('mouseenter', function() {
-
                 $(this).addClass('shadow-filter-pokemon ')
             })
             $('.filter-button').on('mouseleave', function() {
-
                 $(this).removeClass('shadow-filter-pokemon ')
             })
+
+
+            $(document).on('click', ".page-switch, #button-pagination", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let page = $(this).data('page');
+                console.log($(this), page);
+
+                $.ajax({
+                    url: './api/getPokemonFirstGen.php',
+                    type: 'POST',
+                    data: `page=${page}`,
+                    beforeSend: function() {
+                        $('#spinner').removeClass('d-none');
+                        $('#printPokemonNewPage').addClass('blur-cards');
+                    },
+                    success: function(data) {
+                        if (data.response == 200) {
+                            $('#printPokemonNewPage').empty().append(data.html);
+                        }
+                    },
+                    complete: function() {
+                        $('#spinner').addClass('d-none');
+                        $('#printPokemonNewPage').removeClass('blur-cards');
+                    }
+                });
+            });
+
+
+            $('#input-pagination').on('input', function() {
+                let page = $(this).val();
+
+                if (page) {
+                    $('#button-pagination').prop('disabled', false).data('page', page);
+                } else {
+                    $('#button-pagination').prop('disabled', true);
+                }
+            });
+
+
         })
     </script>
 </body>
