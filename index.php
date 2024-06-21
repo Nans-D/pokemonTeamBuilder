@@ -1,37 +1,48 @@
 <?php
 
+use PokePHP\PokeApi;
 
+use function PokePHP\getFirstGeneration;
+
+include './vendor/danrovito/pokephp/src/PokeApi.php';
 
 require 'vendor/autoload.php';
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Utils;
 
+$pokemonApi = new PokeApi;
+
+
 set_time_limit(300); // Augmente la limite d'exécution à 300 secondes
 
 $client = new Client();
 $pokemonPhotos = [];
+$pokemonTypes = [];
+$pokemonList = [];
 $tempFile = 'pokemon_data.json';
 
 // Vérifier si le fichier temporaire existe
+// Vérifier si le fichier temporaire existe
+// Vérifier si le fichier temporaire existe
 if (file_exists($tempFile)) {
     // Lire les données depuis le fichier temporaire
-    $data = json_decode(file_get_contents($tempFile), true);
+    $data = json_decode(file_get_contents($tempFile));
 
     // Vérifier si les clés existent dans les données
-    if (isset($data['pokemonList']) && isset($data['pokemonPhotos'])) {
-        $pokemonList = $data['pokemonList'];
-        $pokemonPhotos = $data['pokemonPhotos'];
+    if (isset($data->pokemonList) && isset($data->pokemonPhotos) && isset($data->pokemonTypes)) {
+        $pokemonList = $data->pokemonList;
+        $pokemonPhotos = (array) $data->pokemonPhotos;
+        $pokemonTypes = (array) $data->pokemonTypes;
     }
 } else {
-    // Récupérer les premiers 151 Pokémon en une seule requête
-    $response = $client->get('https://pokeapi.co/api/v2/pokemon?limit=151');
-    $pokemonList = json_decode(json_encode(json_decode($response->getBody())->results), true);
+    // Récupérer les premiers 151 Pokémon
+    $pokemonList = getFirstGeneration('pokemon', 151);
 
     $promises = [];
     foreach ($pokemonList as $pokemon) {
-        $url = $pokemon['url'];
-        $promises[$pokemon['name']] = $client->getAsync($url);
+        $url = $pokemon->url;
+        $promises[$pokemon->name] = $client->getAsync($url);
     }
 
     // Utilisation de Utils::settle pour gérer les promesses
@@ -39,22 +50,51 @@ if (file_exists($tempFile)) {
 
     foreach ($responses as $name => $response) {
         if ($response['state'] === 'fulfilled') {
-            $pokemonData = json_decode($response['value']->getBody());
+            $pokemonData = json_decode($response['value']->getBody()->getContents());
             $pokemonPhotos[$name] = $pokemonData->sprites->other->{'official-artwork'}->front_default;
+            // Récupérer les types de Pokémon
+            $types = array_map(function ($typeInfo) {
+                return $typeInfo->type->name;
+            }, $pokemonData->types);
+            $pokemonTypes[$name] = $types;
         } else {
             // Gérer les erreurs si nécessaire
             $pokemonPhotos[$name] = null;
+            $pokemonTypes[$name] = null;
         }
     }
 
     // Enregistrer les données dans le fichier temporaire
     file_put_contents($tempFile, json_encode([
         'pokemonList' => $pokemonList,
-        'pokemonPhotos' => $pokemonPhotos
+        'pokemonPhotos' => $pokemonPhotos,
+        'pokemonTypes' => $pokemonTypes
     ]));
 }
 
+// Couleurs pour les types de Pokémon
+const TYPE_COLOR = [
+    'grass' => 'green',
+    'poison' => 'purple',
+    'fire' => 'red',
+    'flying' => 'skyblue',
+    'water' => 'blue',
+    'bug' => 'limegreen',
+    'normal' => 'grey',
+    'electric' => 'yellow',
+    'ground' => 'brown',
+    'fairy' => 'pink',
+    'fighting' => 'orange',
+    'psychic' => 'magenta',
+    'rock' => 'darkgrey',
+    'steel' => 'silver',
+    'ice' => 'cyan',
+    'ghost' => 'darkviolet',
+    'dragon' => 'indigo',
+    'dark' => 'black'
+];
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -63,11 +103,9 @@ if (file_exists($tempFile)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokémon Gallery</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/6a8041b5d6.js" crossorigin="anonymous"></script>
-
     <link rel="stylesheet" href="./assets/style.css">
 
     <style>
@@ -84,6 +122,10 @@ if (file_exists($tempFile)) {
             width: 100px;
             height: 100px;
         }
+
+        .background-card {
+            background: linear-gradient(331deg, rgba(13, 21, 32, 1) 0%, rgba(0, 51, 98, 1) 100%);
+        }
     </style>
 </head>
 
@@ -95,11 +137,11 @@ if (file_exists($tempFile)) {
             <div class="row justify-content-center">
                 <?php for ($i = 0; $i < 6; $i++) : ?>
                     <div class="col-6 col-md-4 col-xl-2 d-flex justify-content-center align-items-center">
-                        <div class="rounded-5" style="aspect-ratio:2.80/4;height:250px;background: rgb(13,21,32);background: linear-gradient(331deg, rgba(13,21,32,1) 0%, rgba(0,51,98,1) 100%);">
-                            <div class="" style="height:80%;">
-                                <img data-card="<?= $i ?>" class="object-fit-contain build-card" style="width:100%;" src="" alt="">
+                        <div data-card="<?= $i ?>" class="rounded-5 background-card" style="aspect-ratio:2.80/4;height:250px;">
+                            <div class="d-flex justify-content-center align-items-center" style="height:80%;">
+                                <img class="object-fit-contain build-card" style="width:80%;" src="" alt="">
                             </div>
-                            <div class="text-light text-center pt-2">Pikachu</div>
+                            <div data-name class="text-light text-center pt-2">???</div>
                         </div>
                     </div>
                 <?php endfor ?>
@@ -108,10 +150,9 @@ if (file_exists($tempFile)) {
         <div class="container">
             <div class="row justify-content-center">
                 <?php foreach ($pokemonList as $pokemon) : ?>
-                    <?php if (isset($pokemonPhotos[$pokemon['name']])) : ?>
-
-                        <div class="col-auto pokemon-card" style="aspect-ratio:1/1;background: rgb(13,21,32);background: linear-gradient(331deg, rgba(13,21,32,1) 0%, rgba(0,51,98,1) 100%);" data-bs-toggle="popover" data-bs-content="<?php echo htmlspecialchars(ucfirst($pokemon['name'])); ?>" data-bs-placement="top">
-                            <img src="<?php echo htmlspecialchars($pokemonPhotos[$pokemon['name']]); ?>" alt="<?php echo htmlspecialchars($pokemon['name']); ?>" class="pokemon-img img-fluid">
+                    <?php if (isset($pokemonPhotos[$pokemon->name])) : ?>
+                        <div class="col-auto pokemon-card background-card-<?= htmlspecialchars($pokemon->name); ?>" data-bs-toggle="popover" data-bs-content="<?= htmlspecialchars(ucfirst($pokemon->name)); ?>" data-bs-placement="top">
+                            <img data-name="<?= $pokemon->name ?>" src="<?= htmlspecialchars($pokemonPhotos[$pokemon->name]); ?>" alt="<?= htmlspecialchars($pokemon->name); ?>" class="pokemon-img img-fluid">
                         </div>
                     <?php endif; ?>
                 <?php endforeach; ?>
@@ -122,16 +163,40 @@ if (file_exists($tempFile)) {
     <?php require_once('./modalPokemon.php') ?>
     <script>
         $(document).ready(function() {
+            let dataCardArray = [];
+            for (let i = 0; i <= 5; i++) {
+                dataCardArray.push($(`[data-card='${i}']`));
+            }
+
             $('[data-bs-toggle="popover"]').popover({
                 trigger: 'hover'
             });
 
             $('.pokemon-img').on('click', function() {
-                let src = $(this).attr('src')
-                $('[data-card="0"]').attr("src", src);
+                let src = $(this).attr('src');
+                let name = $(this).data('name');
 
-            })
-        })
+                let capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+
+                for (let i = 0; i < dataCardArray.length; i++) {
+                    if (!dataCardArray[i].find('img').attr('src')) {
+                        dataCardArray[i].find('img').attr('src', src);
+                        dataCardArray[i].find('[data-name]').text(capitalizedName);
+                        dataCardArray[i].removeClass('background-card');
+                        dataCardArray[i].addClass('background-card-' + name.toLowerCase());
+
+                        break; // Sort de la boucle après avoir trouvé le premier élément vide
+                    }
+                }
+            });
+
+            dataCardArray.forEach((element) => {
+                element.on('click', function() {
+                    element.find('img').attr('src', "");
+                    element.find('[data-name]').text("???");
+                });
+            });
+        });
     </script>
 </body>
 
