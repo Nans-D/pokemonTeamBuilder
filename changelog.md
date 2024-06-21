@@ -1,3 +1,7 @@
+## WAP-02
+
+-Revoir la page principale
+
 ## WAP-01
 
 - Refonte de la pagination
