@@ -1,3 +1,7 @@
+## WAP-03
+
+- Création de l'équipe
+
 ## WAP-02
 
 -Revoir la page principale
