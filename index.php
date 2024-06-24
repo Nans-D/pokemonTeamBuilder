@@ -13,8 +13,7 @@ use GuzzleHttp\Promise\Utils;
 
 $pokemonApi = new PokeApi;
 
-
-set_time_limit(300); // Augmente la limite d'exécution à 300 secondes
+set_time_limit(300);
 
 $client = new Client();
 $pokemonPhotos = [];
@@ -22,9 +21,6 @@ $pokemonTypes = [];
 $pokemonList = [];
 $tempFile = 'pokemon_data.json';
 
-// Vérifier si le fichier temporaire existe
-// Vérifier si le fichier temporaire existe
-// Vérifier si le fichier temporaire existe
 if (file_exists($tempFile)) {
     // Lire les données depuis le fichier temporaire
     $data = json_decode(file_get_contents($tempFile));
@@ -73,26 +69,52 @@ if (file_exists($tempFile)) {
 }
 
 // Couleurs pour les types de Pokémon
-const TYPE_COLOR = [
-    'grass' => 'green',
-    'poison' => 'purple',
-    'fire' => 'red',
-    'flying' => 'skyblue',
-    'water' => 'blue',
-    'bug' => 'limegreen',
-    'normal' => 'grey',
-    'electric' => 'yellow',
-    'ground' => 'brown',
-    'fairy' => 'pink',
-    'fighting' => 'orange',
-    'psychic' => 'magenta',
-    'rock' => 'darkgrey',
-    'steel' => 'silver',
-    'ice' => 'cyan',
-    'ghost' => 'darkviolet',
-    'dragon' => 'indigo',
-    'dark' => 'black'
-];
+define('TYPE_COLOR', [
+    "normal" => 'background: linear-gradient(331deg, rgba(58,58,58,1) 0%, rgba(58,58,58,1) 100%);',
+    "fire" => 'background: linear-gradient(331deg, rgba(245,172,120,1) 0%, rgba(245,172,120,1) 100%);',
+    "water" => 'background: linear-gradient(331deg, rgba(16,77,135,1) 0%, rgba(16,77,135,1) 100%);',
+    "flying" => 'background: linear-gradient(331deg, rgba(194,230,255,1) 0%, rgba(194,230,255,1) 100%);',
+    "bug" => 'background: linear-gradient(331deg, rgba(51,68,35,1) 0%, rgba(51,68,35,1) 100%);',
+    "poison" => 'background: linear-gradient(331deg, rgba(84,52,107,1) 0%, rgba(84,52,107,1) 100%);',
+    "electric" => 'background: linear-gradient(331deg, rgba(194,156,5,1) 0%, rgba(194,156,5,1) 100%);',
+    "ghost" => 'background: linear-gradient(331deg, rgba(25,25,25,1) 0%, rgba(25,25,25,1) 100%);',
+    "dragon" => 'background: linear-gradient(331deg, rgba(27,83,123,1) 0%, rgba(27,83,123,1) 100%);',
+    "ground" => 'background: linear-gradient(331deg, rgba(62,49,40,1) 0%, rgba(62,49,40,1) 100%);',
+    "rock" => 'background: linear-gradient(331deg, rgba(173,127,88,1) 0%, rgba(173,127,88,1) 100%);',
+    "grass" => 'background: linear-gradient(331deg, rgba(23,73,51,1) 0%, rgba(23,73,51,1) 100%);',
+    "ice" => 'background: linear-gradient(331deg, rgba(124,226,254,1) 0%, rgba(124,226,254,1) 100%);',
+    "psychic" => 'background: linear-gradient(331deg, rgba(105,41,85,1) 0%, rgba(105,41,85,1) 100%);',
+    "fairy" => 'background: linear-gradient(331deg, rgba(255,141,204,1) 0%, rgba(255,141,204,1) 100%);',
+    "fighting" => 'background: linear-gradient(331deg, rgba(110,41,32,1) 0%, rgba(110,41,32,1) 100%);',
+    "grass,poison" => 'background: linear-gradient(331deg, rgba(23,73,51,1) 0%, rgba(84,52,107,1) 100%);',
+    "normal,flying" => 'background: linear-gradient(331deg, rgba(58,58,58,1) 0%, rgba(194,230,255,1) 100%);',
+    "poison,flying" => 'background: linear-gradient(331deg, rgba(84,52,107,1) 0%, rgba(194,230,255,1) 100%);',
+    "fire,flying" => 'background: linear-gradient(331deg, rgba(198,183,245,1) 0%, rgba(245,172,120,1) 100%);',
+    "bug,flying" => 'background: linear-gradient(331deg, rgba(198,183,245,1) 0%, rgba(198,209,110,1) 100%);',
+    "bug,poison" => 'background: linear-gradient(331deg, rgba(193,131,193,1) 0%, rgba(198,209,110,1) 100%);',
+    "poison,ground" => 'background: linear-gradient(331deg, rgba(84,52,107,1) 0%, rgba(62,49,40,1) 100%);',
+    "normal,fairy" => 'background: linear-gradient(331deg, rgba(58,58,58,1) 0%, rgba(255,141,204,1) 100%);',
+    "bug,grass" => 'background: linear-gradient(331deg, rgba(51,68,35,1) 0%, rgba(23,73,51,1) 100%);',
+    "water,fighting" => 'background: linear-gradient(331deg, rgba(110,41,32,1) 0%, rgba(16,77,135,1) 100%);',
+    "water,poison" => 'background: linear-gradient(331deg, rgba(84,52,107,1) 0%, rgba(16,77,135,1) 100%);',
+    "water,psychic" => 'background: linear-gradient(331deg, rgba(105,41,85,1) 0%, rgba(16,77,135,1) 100%);',
+    "rock,ground" => 'background: linear-gradient(331deg, rgba(62,49,40,1) 0%, rgba(173,127,88,1) 100%);',
+    "electric,steel" => 'background: linear-gradient(331deg, rgba(168,168,168,1) 0%, rgba(194,156,5,1) 100%);',
+    "water,ice" => 'background: linear-gradient(331deg, rgba(124,226,254,1) 0%, rgba(16,77,135,1) 100%);',
+    "ghost,poison" => 'background: linear-gradient(331deg, rgba(25,25,25,1) 0%, rgba(84,52,107,1) 100%);',
+    "grass,psychic" => 'background: linear-gradient(331deg, rgba(23,73,51,1) 0%, rgba(105,41,85,1) 100%);',
+    "psychic,fairy" => 'background: linear-gradient(331deg, rgba(255,141,204,1) 0%, rgba(105,41,85,1) 100%);',
+    "ice,psychic" => 'background: linear-gradient(331deg, rgba(105,41,85,1) 0%, rgba(124,226,254,1) 100%);',
+    "water,flying" => 'background: linear-gradient(331deg, rgba(16,77,135,1) 0%, rgba(194,230,255,1) 100%);',
+    "rock,flying" => 'background: linear-gradient(331deg, rgba(194,230,255,1) 0%, rgba(173,127,88,1) 100%);',
+    "ice,flying" => 'background: linear-gradient(331deg, rgba(124,226,254,1) 0%, rgba(194,230,255,1) 100%);',
+    "electric,flying" => 'background: linear-gradient(331deg, rgba(124,226,254,1) 0%, rgba(194,156,5,1) 100%);',
+    "rock,water" => 'background: linear-gradient(331deg, rgba(16,77,135,1) 0%, rgba(173,127,88,1) 100%);',
+    "fire,flying" => 'background: linear-gradient(331deg, rgba(124,226,254,1) 0%, rgba(167,81,10,1) 100%);',
+    "dragon,flying" => 'background: linear-gradient(331deg, rgba(124,226,254,1) 0%, rgba(27,83,123,1) 100%);',
+
+    // Ajoutez d'autres types ou combinaisons ici...
+]);
 ?>
 
 <!DOCTYPE html>
@@ -123,6 +145,11 @@ const TYPE_COLOR = [
             height: 100px;
         }
 
+        .card-size {
+            aspect-ratio: 2.80/4;
+            height: 250px;
+        }
+
         .background-card {
             background: linear-gradient(331deg, rgba(13, 21, 32, 1) 0%, rgba(0, 51, 98, 1) 100%);
         }
@@ -137,7 +164,7 @@ const TYPE_COLOR = [
             <div class="row justify-content-center">
                 <?php for ($i = 0; $i < 6; $i++) : ?>
                     <div class="col-6 col-md-4 col-xl-2 d-flex justify-content-center align-items-center">
-                        <div data-card="<?= $i ?>" class="rounded-5 background-card" style="aspect-ratio:2.80/4;height:250px;">
+                        <div data-card="<?= $i ?>" class="rounded-5 card-size background-card">
                             <div class="d-flex justify-content-center align-items-center" style="height:80%;">
                                 <img class="object-fit-contain build-card" style="width:80%;" src="" alt="">
                             </div>
@@ -151,17 +178,20 @@ const TYPE_COLOR = [
             <div class="row justify-content-center">
                 <?php foreach ($pokemonList as $pokemon) : ?>
                     <?php if (isset($pokemonPhotos[$pokemon->name])) : ?>
-                        <div class="col-auto pokemon-card background-card-<?= htmlspecialchars($pokemon->name); ?>" data-bs-toggle="popover" data-bs-content="<?= htmlspecialchars(ucfirst($pokemon->name)); ?>" data-bs-placement="top">
+                        <div class="col-auto pokemon-card background-card" data-bs-toggle="popover" data-bs-content="<?= htmlspecialchars(ucfirst($pokemon->name)); ?>" data-bs-placement="top" data-type="<?= htmlspecialchars(implode(',', $pokemonTypes[$pokemon->name])); ?>">
                             <img data-name="<?= $pokemon->name ?>" src="<?= htmlspecialchars($pokemonPhotos[$pokemon->name]); ?>" alt="<?= htmlspecialchars($pokemon->name); ?>" class="pokemon-img img-fluid">
                         </div>
                     <?php endif; ?>
                 <?php endforeach; ?>
+
             </div>
         </div>
     </div>
 
     <?php require_once('./modalPokemon.php') ?>
-    <script>
+    <script type="text/javascript">
+        const TYPE_COLOR = <?= json_encode(TYPE_COLOR); ?>;
+
         $(document).ready(function() {
             let dataCardArray = [];
             for (let i = 0; i <= 5; i++) {
@@ -175,7 +205,8 @@ const TYPE_COLOR = [
             $('.pokemon-img').on('click', function() {
                 let src = $(this).attr('src');
                 let name = $(this).data('name');
-
+                let types = $(this).closest('.pokemon-card').data('type');
+                console.log(types);
                 let capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
 
                 for (let i = 0; i < dataCardArray.length; i++) {
@@ -183,7 +214,10 @@ const TYPE_COLOR = [
                         dataCardArray[i].find('img').attr('src', src);
                         dataCardArray[i].find('[data-name]').text(capitalizedName);
                         dataCardArray[i].removeClass('background-card');
-                        dataCardArray[i].addClass('background-card-' + name.toLowerCase());
+
+                        if (TYPE_COLOR[types]) {
+                            dataCardArray[i].attr('style', TYPE_COLOR[types]);
+                        }
 
                         break; // Sort de la boucle après avoir trouvé le premier élément vide
                     }
@@ -194,10 +228,13 @@ const TYPE_COLOR = [
                 element.on('click', function() {
                     element.find('img').attr('src', "");
                     element.find('[data-name]').text("???");
+                    element.removeAttr('style');
+                    element.addClass('background-card');
                 });
             });
         });
     </script>
+
 </body>
 
 </html>
