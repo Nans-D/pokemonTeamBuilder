@@ -131,6 +131,11 @@ define('TYPE_COLOR', [
     <link rel="stylesheet" href="./assets/style.css">
 
     <style>
+        .disabled {
+            pointer-events: none;
+            opacity: 0.2;
+        }
+
         .pokemon-card {
             margin: 10px;
             text-align: center;
@@ -142,7 +147,7 @@ define('TYPE_COLOR', [
 
         .pokemon-img {
             width: 100px;
-            height: 100px;
+            aspect-ratio: 1/1;
         }
 
         .card-size {
@@ -153,6 +158,38 @@ define('TYPE_COLOR', [
         .background-card {
             background: linear-gradient(331deg, rgba(13, 21, 32, 1) 0%, rgba(0, 51, 98, 1) 100%);
         }
+
+
+
+        @media(max-width:374.98px) {
+            .card-size {
+                height: 180px;
+            }
+        }
+
+        @media(min-width:375px) and (max-width:575.98px) {
+            .card-size {
+                height: 220px;
+            }
+        }
+
+        @media(min-width:576px) and (max-width:767.98px) {
+            .card-size {
+                height: 240px;
+            }
+        }
+
+        @media(min-width:768px) and (max-width:991.98px) {
+            .card-size {
+                height: 170px;
+            }
+        }
+
+        @media(min-width:992px) and (max-width:1139.98px) {
+            .card-size {
+                height: 220px;
+            }
+        }
     </style>
 </head>
 
@@ -160,32 +197,38 @@ define('TYPE_COLOR', [
     <?php include('header.php') ?>
 
     <div class="container-xl">
-        <section class="border border-danger my-2 p-4">
-            <div class="row justify-content-center">
+        <section class="my-2 p-4">
+            <div class="row g-3 justify-content-center">
                 <?php for ($i = 0; $i < 6; $i++) : ?>
-                    <div class="col-6 col-md-4 col-xl-2 d-flex justify-content-center align-items-center">
-                        <div data-card="<?= $i ?>" class="rounded-5 card-size background-card">
+                    <div class="col-6 col-sm-4 col-md-2 col-xl-2">
+                        <div data-card="<?= $i ?>" class="rounded-5 card-size background-card mx-auto">
                             <div class="d-flex justify-content-center align-items-center" style="height:80%;">
                                 <img class="object-fit-contain build-card" style="width:80%;" src="" alt="">
                             </div>
                             <div data-name class="text-light text-center pt-2">???</div>
                         </div>
+                        <div class="d-flex justify-content-center pt-3">
+                            <button data-bs-toggle="modal" data-bs-target="#exampleModal" data-name class='btn btn-primary align-self-center'>Voir plus</button>
+                        </div>
                     </div>
                 <?php endfor ?>
             </div>
+            <div class='d-flex justify-content-center'>
+
+                <button class='mt-5 px-3 py-1 btn btn-primary'>Save</button>
+            </div>
         </section>
-        <div class="container">
+        <section class="my-2 p-4">
             <div class="row justify-content-center">
                 <?php foreach ($pokemonList as $pokemon) : ?>
                     <?php if (isset($pokemonPhotos[$pokemon->name])) : ?>
-                        <div class="col-auto pokemon-card background-card" data-bs-toggle="popover" data-bs-content="<?= htmlspecialchars(ucfirst($pokemon->name)); ?>" data-bs-placement="top" data-type="<?= htmlspecialchars(implode(',', $pokemonTypes[$pokemon->name])); ?>">
-                            <img data-name="<?= $pokemon->name ?>" src="<?= htmlspecialchars($pokemonPhotos[$pokemon->name]); ?>" alt="<?= htmlspecialchars($pokemon->name); ?>" class="pokemon-img img-fluid">
+                        <div class="col-3 col-sm-2 col-md-auto pokemon-card background-card" data-bs-toggle="popover" data-bs-content="<?= htmlspecialchars(ucfirst($pokemon->name)); ?>" data-bs-placement="top" data-type="<?= htmlspecialchars(implode(',', $pokemonTypes[$pokemon->name])); ?>">
+                            <img data-name="<?= $pokemon->name ?>" src="<?= htmlspecialchars($pokemonPhotos[$pokemon->name]); ?>" alt="<?= htmlspecialchars($pokemon->name); ?>" class="object-fit-contain pokemon-img img-fluid">
                         </div>
                     <?php endif; ?>
                 <?php endforeach; ?>
-
             </div>
-        </div>
+        </section>
     </div>
 
     <?php require_once('./modalPokemon.php') ?>
@@ -202,11 +245,11 @@ define('TYPE_COLOR', [
                 trigger: 'hover'
             });
 
+
             $('.pokemon-img').on('click', function() {
                 let src = $(this).attr('src');
                 let name = $(this).data('name');
                 let types = $(this).closest('.pokemon-card').data('type');
-                console.log(types);
                 let capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
 
                 for (let i = 0; i < dataCardArray.length; i++) {
@@ -214,24 +257,50 @@ define('TYPE_COLOR', [
                         dataCardArray[i].find('img').attr('src', src);
                         dataCardArray[i].find('[data-name]').text(capitalizedName);
                         dataCardArray[i].removeClass('background-card');
-
                         if (TYPE_COLOR[types]) {
                             dataCardArray[i].attr('style', TYPE_COLOR[types]);
                         }
-
                         break; // Sort de la boucle après avoir trouvé le premier élément vide
                     }
                 }
+                dataCardArray.forEach((element) => {
+                    if ($(this).data('name') == element.find('[data-name]').text().toLowerCase()) {
+                        $(this).parent().addClass('d-none');
+                    }
+                })
+
+                checkAndToggleDisable();
             });
 
             dataCardArray.forEach((element) => {
                 element.on('click', function() {
                     element.find('img').attr('src', "");
+                    let nameElement = element.find('[data-name]').text().toLowerCase();
+
                     element.find('[data-name]').text("???");
                     element.removeAttr('style');
                     element.addClass('background-card');
+
+                    // Chercher l'image du Pokémon caché et enlever la classe d-none
+                    $('.pokemon-card.d-none').each(function() {
+                        if ($(this).find('.pokemon-img').data('name') == nameElement) {
+                            $(this).removeClass('d-none');
+                        }
+                    });
+
+                    checkAndToggleDisable();
                 });
             });
+
+            function checkAndToggleDisable() {
+                let allElementsHaveNoBackgroundCard = dataCardArray.every(element => !element.hasClass('background-card'));
+
+                if (allElementsHaveNoBackgroundCard) {
+                    $('.pokemon-img').addClass('disabled');
+                } else {
+                    $('.pokemon-img').removeClass('disabled');
+                }
+            }
         });
     </script>
 
