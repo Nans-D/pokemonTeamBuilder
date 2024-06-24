@@ -1,3 +1,7 @@
+## WAP-04
+
+- Changement de background-color quand on ajoute un pokemon
+
 ## WAP-03
 
 - Changement de background-color quand on ajoute un pokemon
