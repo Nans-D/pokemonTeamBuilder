@@ -208,7 +208,7 @@ define('TYPE_COLOR', [
                             <div data-name class="text-light text-center pt-2">???</div>
                         </div>
                         <div class="d-flex justify-content-center pt-3">
-                            <button data-bs-toggle="modal" data-bs-target="#exampleModal" data-name class='btn btn-primary align-self-center'>Voir plus</button>
+                            <button data-name data-bs-toggle="modal" data-bs-target="#exampleModal" class='btn btn-primary align-self-center'>Voir plus</button>
                         </div>
                     </div>
                 <?php endfor ?>
@@ -240,6 +240,10 @@ define('TYPE_COLOR', [
             for (let i = 0; i <= 5; i++) {
                 dataCardArray.push($(`[data-card='${i}']`));
             }
+            let dataModalArray = [];
+            for (let i = 0; i <= 5; i++) {
+                dataModalArray.push($(`[data-modal="${i}"]`));
+            }
 
             $('[data-bs-toggle="popover"]').popover({
                 trigger: 'hover'
@@ -260,9 +264,34 @@ define('TYPE_COLOR', [
                         if (TYPE_COLOR[types]) {
                             dataCardArray[i].attr('style', TYPE_COLOR[types]);
                         }
+                        dataModalArray[i].attr('data-name', capitalizedName.toLowerCase());
+                        dataModalArray[i].attr('data-modal', i);
+
+
+                        $.ajax({
+                            url: './api/modalPokemon.php',
+                            type: 'POST',
+                            data: `name=${name}`,
+                            success: function(data) {
+                                if (data.response == 200) {
+                                    // Mise à jour des éléments spécifiques de la modal actuelle utilisant l'index
+                                    $('.photo').attr('src', data.pokemonPhoto);
+                                    $('.name').text('Name : ' + data.pokemonName);
+                                    $('.type').text('Type : ' + data.pokemonType);
+                                    $('.height').text('Height : ' + data.pokemonHeight);
+                                    $('.weight').text('Weight : ' + data.pokemonWeight);
+                                    $('.ability').text('Ability : ' + data.pokemonAbility);
+
+                                } else {
+                                    alert(data.message);
+                                }
+                            }
+                        });
+
                         break; // Sort de la boucle après avoir trouvé le premier élément vide
                     }
                 }
+
                 dataCardArray.forEach((element) => {
                     if ($(this).data('name') == element.find('[data-name]').text().toLowerCase()) {
                         $(this).parent().addClass('d-none');
@@ -301,7 +330,8 @@ define('TYPE_COLOR', [
                     $('.pokemon-img').removeClass('disabled');
                 }
             }
-        });
+
+        })
     </script>
 
 </body>
