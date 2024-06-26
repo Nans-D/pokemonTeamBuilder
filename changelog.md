@@ -1,3 +1,9 @@
+## WAP_06
+
+- Login / Sign in / Logout
+- Create DB pokemon builder
+- Api Save team builder
+
 ## WAP-05
 
 - Optimisation du team builder
