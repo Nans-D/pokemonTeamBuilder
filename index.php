@@ -208,7 +208,7 @@ define('TYPE_COLOR', [
                             <div data-name class="text-light text-center pt-2">???</div>
                         </div>
                         <div class="d-flex justify-content-center pt-3">
-                            <button data-name data-bs-toggle="modal" data-bs-target="#exampleModal" class='btn btn-primary align-self-center'>Voir plus</button>
+                            <button data-name data-bs-toggle="modal" data-bs-target="#exampleModal<?= $i ?>" class='btn btn-primary align-self-center'>Voir plus</button>
                         </div>
                     </div>
                 <?php endfor ?>
@@ -245,6 +245,8 @@ define('TYPE_COLOR', [
                 dataModalArray.push($(`[data-modal="${i}"]`));
             }
 
+            checkBackgroundCard();
+
             $('[data-bs-toggle="popover"]').popover({
                 trigger: 'hover'
             });
@@ -264,6 +266,10 @@ define('TYPE_COLOR', [
                         if (TYPE_COLOR[types]) {
                             dataCardArray[i].attr('style', TYPE_COLOR[types]);
                         }
+                        checkBackgroundCard();
+
+
+                        dataModalArray[i].attr('id', 'exampleModal' + i);
                         dataModalArray[i].attr('data-name', capitalizedName.toLowerCase());
                         dataModalArray[i].attr('data-modal', i);
 
@@ -275,12 +281,12 @@ define('TYPE_COLOR', [
                             success: function(data) {
                                 if (data.response == 200) {
                                     // Mise à jour des éléments spécifiques de la modal actuelle utilisant l'index
-                                    $('.photo').attr('src', data.pokemonPhoto);
-                                    $('.name').text('Name : ' + data.pokemonName);
-                                    $('.type').text('Type : ' + data.pokemonType);
-                                    $('.height').text('Height : ' + data.pokemonHeight);
-                                    $('.weight').text('Weight : ' + data.pokemonWeight);
-                                    $('.ability').text('Ability : ' + data.pokemonAbility);
+                                    $('.photo' + i).attr('src', data.pokemonPhoto);
+                                    $('.name' + i).text(data.pokemonName.charAt(0).toUpperCase() + data.pokemonName.slice(1));
+                                    $('.type' + i).text('Type : ' + data.pokemonType);
+                                    $('.height' + i).text('Height : ' + data.pokemonHeight);
+                                    $('.weight' + i).text('Weight : ' + data.pokemonWeight);
+                                    $('.ability' + i).text('Ability : ' + data.pokemonAbility);
 
                                 } else {
                                     alert(data.message);
@@ -292,12 +298,13 @@ define('TYPE_COLOR', [
                     }
                 }
 
+
+
                 dataCardArray.forEach((element) => {
                     if ($(this).data('name') == element.find('[data-name]').text().toLowerCase()) {
                         $(this).parent().addClass('d-none');
                     }
                 })
-
                 checkAndToggleDisable();
             });
 
@@ -309,6 +316,8 @@ define('TYPE_COLOR', [
                     element.find('[data-name]').text("???");
                     element.removeAttr('style');
                     element.addClass('background-card');
+                    checkBackgroundCard();
+
 
                     // Chercher l'image du Pokémon caché et enlever la classe d-none
                     $('.pokemon-card.d-none').each(function() {
@@ -329,6 +338,16 @@ define('TYPE_COLOR', [
                 } else {
                     $('.pokemon-img').removeClass('disabled');
                 }
+            }
+
+            function checkBackgroundCard() {
+                dataCardArray.forEach(function(element, index) {
+                    if (element.hasClass('background-card')) {
+                        $('[data-bs-target="#exampleModal' + index + '"]').prop('disabled', true);
+                    } else {
+                        $('[data-bs-target="#exampleModal' + index + '"]').prop('disabled', false);
+                    }
+                });
             }
 
         })
