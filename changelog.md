@@ -1,3 +1,8 @@
+## WAP-05
+
+- Optimisation du team builder
+- Intégration d'une modal pour plus d'informations sur un pokemon présent dans le team builder
+
 ## WAP-04
 
 - Changement de background-color quand on ajoute un pokemon
