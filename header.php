@@ -85,7 +85,7 @@
             <div id="nav-bar" class="position-absolute d-none end-0 bg-light rounded-4" style="width:150px;top:50px; background: radial-gradient(circle, rgba(112,184,255,1) 0%, rgba(16,77,135,1) 100%);">
                 <ul class="d-flex flex-column justify-content-center align-items-center list-unstyled h-100 m-0">
                     <li class="text-center">
-                        <a class="link-header text-light text-decoration-none fs-3" href="#">My team</a>
+                        <a class="link-header text-light text-decoration-none fs-3" href="./myteam.php">My team</a>
                     </li>
                     <li class="text-center">
                         <a class="link-header text-light text-decoration-none fs-3" method="post" href="<?= ($_SESSION['name'] != null) ? './api/logout.php' : './login.php'; ?>"><?= ($_SESSION['name'] != null) ? 'Logout' : 'Login'; ?></a>

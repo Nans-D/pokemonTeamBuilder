@@ -1,6 +1,8 @@
 <?php
 
-require_once '../config.php';
+
+require_once __DIR__ . '/../../config.php';
+
 
 
 class PokemonTeam
@@ -71,7 +73,7 @@ class PokemonTeam
     public function delete()
     {
         $link = connexion();
-        $sql = "DELETE FROM pokemon_team WHERE id = '$this->id'";
+        $sql = "DELETE FROM team WHERE id = '$this->id'";
         $result = mysqli_query($link, $sql);
         if ($result) {
             return true;
@@ -82,12 +84,38 @@ class PokemonTeam
     public function update()
     {
         $link = connexion();
-        $sql = "UPDATE pokemon_team SET firstPokemon = '$this->firstPokemon', secondPokemon = '$this->secondPokemon', thirdPokemon = '$this->thirdPokemon', fourthPokemon = '$this->fourthPokemon', fifthPokemon = '$this->fifthPokemon', sixthPokemon = '$this->sixthPokemon' WHERE id = '$this->id'";
+        $sql = "UPDATE team SET first_pokemon = '$this->firstPokemon', second_pokemon = '$this->secondPokemon', third_pokemon = '$this->thirdPokemon', fourth_pokemon = '$this->fourthPokemon', fifth_pokemon = '$this->fifthPokemon', sixth_pokemon = '$this->sixthPokemon' WHERE id = '$this->id'";
         $result = mysqli_query($link, $sql);
         if ($result) {
             return true;
         }
         return false;
+    }
+
+    public function getTeam()
+    {
+        $link = connexion();
+        $sql = "SELECT * FROM team WHERE id_user = '$this->id_user'";
+        $result = mysqli_query($link, $sql);
+        if (mysqli_num_rows($result) <= 0) {
+            return 'No team found';
+        }
+
+        $responses = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $response['id'] = $row['id'];
+            $response['id_user'] = $row['id_user'];
+            $response['first_pokemon'] = $row['first_pokemon'];
+            $response['second_pokemon'] = $row['second_pokemon'];
+            $response['third_pokemon'] = $row['third_pokemon'];
+            $response['fourth_pokemon'] = $row['fourth_pokemon'];
+            $response['fifth_pokemon'] = $row['fifth_pokemon'];
+            $response['sixth_pokemon'] = $row['sixth_pokemon'];
+
+            $responses[] = $response;
+        }
+
+        return $responses;
     }
 
     public function getId()
