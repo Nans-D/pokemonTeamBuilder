@@ -14,14 +14,10 @@
 
 <body>
     <section class="container-xl" style="height:100vh;">
+        <a href="./index.php" class="position-absolute top-0"><img src="./assets/img/logo-team-builder.png" alt="" style="width: 120px;"></a>
         <div class="row justify-content-center align-items-center h-100">
-            <div class="col-4 d-none d-md-block">
-                <img style="width: 100%;" src="./assets/img/pokemon-ball-house-anime-digital-art-4k-wallpaper-uhdpaper.com-68@1@o.jpg" class="object-fit-contain" alt="">
-            </div>
-
-
             <div class="col-12 col-md-4">
-
+                <h1 class="text-white text-center mb-4">Register</h1>
                 <form method="post" action="./api/register.php">
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
@@ -37,6 +33,9 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
+
+                <a href="./login.php" class='link-light'>I already have an account</a>
+
             </div>
     </section>
 </body>

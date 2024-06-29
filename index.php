@@ -1,3 +1,5 @@
+<?php require_once 'config.php'; ?>
+
 <?php include('header.php') ?>
 
 <body class="overflow-xl" style="height:100vh;">
