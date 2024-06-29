@@ -52,6 +52,7 @@ class User
             $row = mysqli_fetch_assoc($result);
             if (password_verify($this->password, $row['password'])) {
                 session_start();
+                $_SESSION['idUser'] = $row['id'];
                 $_SESSION['email'] = $row['email'];
                 $_SESSION['name'] = $row['name'];
                 return true;

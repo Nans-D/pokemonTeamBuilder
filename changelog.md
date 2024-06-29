@@ -1,3 +1,9 @@
+## WAP_07
+
+- Création de la page de création d'équipe
+- Création de la table de l'équipe (mySQL)
+- Lien avec l'api POKEAPI
+
 ## WAP_06
 
 - Login / Sign in / Logout

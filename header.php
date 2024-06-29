@@ -91,6 +91,12 @@
                         <a class="link-header text-light text-decoration-none fs-3" method="post" href="<?= ($_SESSION['name'] != null) ? './api/logout.php' : './login.php'; ?>"><?= ($_SESSION['name'] != null) ? 'Logout' : 'Login'; ?></a>
                     </li>
 
+                    <?php if ($_SESSION['name'] == null) : ?>
+                        <li class="text-center">
+                            <a class="link-header text-light text-decoration-none fs-3" method="post" href="./register.php">Register</a>
+                        </li>
+                    <?php endif; ?>
+
                 </ul>
 
             </div>

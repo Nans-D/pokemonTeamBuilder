@@ -1,5 +1,6 @@
 <?php
-include '../config.php';
+session_start();
+require_once '../config.php';
 require_once 'class/user.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -20,12 +21,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $user->create();
 
-        var_dump($user->getId());
-        exit;
+        if (is_null($user->getId())) {
+            throw new Exception('Error while creating user');
+        }
 
-        // if (is_null($user->getId())) {
-        //     throw new Exception('Error while creating user');
-        // }
+        $_SESSION['name'] = $user->getName();
+
+        if (!isset($_SESSION['name'])) {
+            throw new Exception('Error while getting user');
+        }
+
+
 
         header('Location: ../index.php');
         exit;
