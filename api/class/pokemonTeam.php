@@ -9,6 +9,7 @@ class PokemonTeam
 {
     private $id;
     private $id_user;
+    private $numeroTeam;
     private $firstPokemon;
     private $secondPokemon;
     private $thirdPokemon;
@@ -16,10 +17,11 @@ class PokemonTeam
     private $fifthPokemon;
     private $sixthPokemon;
 
-    public function __construct($id = null, $id_user = null, $firstPokemon = null, $secondPokemon = null, $thirdPokemon = null, $fourthPokemon = null, $fifthPokemon = null, $sixthPokemon = null)
+    public function __construct($id = null, $id_user = null, $numeroTeam = null, $firstPokemon = null, $secondPokemon = null, $thirdPokemon = null, $fourthPokemon = null, $fifthPokemon = null, $sixthPokemon = null)
     {
         $this->id = $id;
         $this->id_user = $id_user;
+        $this->numeroTeam = $numeroTeam;
         $this->firstPokemon = $firstPokemon;
         $this->secondPokemon = $secondPokemon;
         $this->thirdPokemon = $thirdPokemon;
@@ -39,6 +41,7 @@ class PokemonTeam
         $sql = "INSERT INTO team 
         (`id`, 
         `id_user`, 
+        `numero_team`,
         `first_pokemon`, 
         `second_pokemon`, 
         `third_pokemon`, 
@@ -50,6 +53,7 @@ class PokemonTeam
         VALUES (
         NULL,
         " . (!is_null($this->id_user) ? "'" . mysqli_real_escape_string($link, $this->id_user) . "'" : "NULL") . ",
+        " . (!is_null($this->numeroTeam) ? "'" . mysqli_real_escape_string($link, $this->numeroTeam) . "'" : "NULL") . ",
         " . (!is_null($this->firstPokemon) ? "'" . mysqli_real_escape_string($link, $this->firstPokemon) . "'" : "NULL") . ",
         " . (!is_null($this->secondPokemon) ? "'" . mysqli_real_escape_string($link, $this->secondPokemon) . "'" : "NULL") . ",
         " . (!is_null($this->thirdPokemon) ? "'" . mysqli_real_escape_string($link, $this->thirdPokemon) . "'" : "NULL") . ",
@@ -92,30 +96,33 @@ class PokemonTeam
         return false;
     }
 
-    public function getTeam()
+    public function getTeam($numeroTeam)
     {
+
         $link = connexion();
-        $sql = "SELECT * FROM team WHERE id_user = '$this->id_user'";
+
+        $sql = "SELECT * FROM team WHERE id_user = '$this->id_user' AND numero_team = '$numeroTeam'";
+
         $result = mysqli_query($link, $sql);
         if (mysqli_num_rows($result) <= 0) {
             return 'No team found';
         }
 
-        $responses = [];
+
         while ($row = mysqli_fetch_assoc($result)) {
+
             $response['id'] = $row['id'];
             $response['id_user'] = $row['id_user'];
+            $response['numero_team'] = $row['numero_team'];
             $response['first_pokemon'] = $row['first_pokemon'];
             $response['second_pokemon'] = $row['second_pokemon'];
             $response['third_pokemon'] = $row['third_pokemon'];
             $response['fourth_pokemon'] = $row['fourth_pokemon'];
             $response['fifth_pokemon'] = $row['fifth_pokemon'];
             $response['sixth_pokemon'] = $row['sixth_pokemon'];
-
-            $responses[] = $response;
         }
 
-        return $responses;
+        return $response;
     }
 
     public function getId()
@@ -157,4 +164,26 @@ class PokemonTeam
     {
         return $this->sixthPokemon;
     }
+}
+
+function ckeckNumberTeam($id_user)
+{
+    $link = connexion();
+    $sql = "SELECT COUNT(*) FROM team WHERE id_user = '$id_user'";
+    $result = mysqli_query($link, $sql);
+    $row = mysqli_fetch_assoc($result);
+    $nombreTeam = $row['COUNT(*)'];
+    return $nombreTeam + 1;
+}
+
+function checkTooMuchTeam($id_user)
+{
+    $link = connexion();
+    $sql = "SELECT COUNT(*) FROM team WHERE id_user = '$id_user'";
+    $result = mysqli_query($link, $sql);
+    $row = mysqli_fetch_assoc($result);
+    if ($row['COUNT(*)'] >= 4) {
+        return true;
+    }
+    return false;
 }

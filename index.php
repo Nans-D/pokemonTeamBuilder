@@ -11,7 +11,6 @@ if (isset($_SESSION['name']) && $_SESSION['name'] != null) {
     $_SESSION['idUser'] = null;
 }
 
-use PokePHP\PokeApi;
 
 use function PokePHP\getFirstGeneration;
 
@@ -22,7 +21,6 @@ require 'vendor/autoload.php';
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Utils;
 
-$pokemonApi = new PokeApi;
 
 set_time_limit(300);
 

@@ -21,12 +21,16 @@ try {
     }
 
 
-    $name = json_decode($_POST['name']);
+    $team = json_decode($_POST['name']);
+
+    if (checkTooMuchTeam($_SESSION['idUser'])) {
+        throw new Exception('You can only have 4 team');
+    }
 
     $error = 0;
-    foreach ($name as $key => $value) {
-        if ($value == '???') {
-            $name[$key] = null;
+    foreach ($team as $key => $name) {
+        if ($name == '???') {
+            $team[$key] = null;
             $error++;
         }
     }
@@ -39,13 +43,19 @@ try {
         throw new Exception('You must be logged in to save your team');
     }
 
+
+
     $idUser = $_SESSION['idUser'];
 
-    $pokemonTeam = new PokemonTeam(null, $idUser, $name[0], $name[1], $name[2], $name[3], $name[4], $name[5]);
+    $nombreTeam = ckeckNumberTeam($_SESSION['idUser']);
+
+
+    $pokemonTeam = new PokemonTeam(null, $idUser, $nombreTeam, $team[0], $team[1], $team[2], $team[3], $team[4], $team[5]);
 
     if (!$pokemonTeam->create()) {
         $response['message'] = throw new Exception('Error while creating team');
     }
+
 
     $response['response'] = 200;
     $response['message'] = 'Team saved';
