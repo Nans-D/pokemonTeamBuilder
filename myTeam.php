@@ -80,27 +80,18 @@ $pokemonApi = new PokeApi;
             </div>
         <?php endfor; ?>
     </div>
-</div>
 
-<!-- 
-<div class='container-xl'>
-    <div class='row'></div>
-    <?php foreach ($teams as $key => $team) : ?>
-        <div class="col-12 mb-4 border border-danger">
-            <div>Team <?= $key + 1 ?></div>
-            <div class="d-flex flex-column">
-                <?php for ($i = 0; $i < count($team); $i++) : ?>
-                    <div class="row align-items-center">
-                        <div class="col-2">
-                            <img src="<?= $team[$i]->sprites->front_default ?>" alt="" class="" width="100" height="100">
-                        </div>
-                        <div class="col-6"><?= $team[$i]->name ?></div>
-                    </div>
-                <?php endfor; ?>
+
+    <div class='mt-5 background-image text-light rounded-5 shadow-lg' style="height:164px">
+        <div id="printTeam" class="row justify-content-center p-2 h-100">
+            <div class="d-flex justify-content-center align-items-center">
+                <p>Select your team !</p>
             </div>
         </div>
-    <?php endforeach; ?>
-</div> -->
+
+    </div>
+
+</div>
 
 <script>
     $(document).ready(function() {
@@ -109,18 +100,19 @@ $pokemonApi = new PokeApi;
             teams.push($(`#team${i}`));
         }
 
+
+
         teams.forEach((element) => {
             element.on('click', function() {
                 let teamId = element.attr('id').replace('team', '');
-                console.log(teamId);
-
                 $.ajax({
                     url: './api/getTeam.php',
                     type: 'POST',
                     data: `numeroTeam=${teamId}`,
                     success: function(data) {
                         if (data.response == 200) {
-                            console.log(data.team);
+                            $('#printTeam').html(data.team);
+
                         } else {
                             alert(data.message);
                         }
