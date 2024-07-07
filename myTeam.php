@@ -17,55 +17,10 @@ if ($_SESSION['name'] == null) {
 
 $pokemonTeam = new PokemonTeam(null, $_SESSION['idUser']);
 $pokemonApi = new PokeApi;
-// $responses = $pokemonTeam->getTeam();
 
+// TYPES
 
-
-// $team = [];
-// foreach ($responses as $key => $response) {
-
-//     if (!empty($response['first_pokemon'])) {
-//         $team[] = json_decode($pokemonApi->Pokemon($response['first_pokemon']));
-//     }
-//     if (!empty($response['second_pokemon'])) {
-//         $team[] = json_decode($pokemonApi->Pokemon($response['second_pokemon']));
-//     }
-//     if (!empty($response['third_pokemon'])) {
-//         $team[] = json_decode($pokemonApi->Pokemon($response['third_pokemon']));
-//     }
-//     if (!empty($response['fourth_pokemon'])) {
-//         $team[] = json_decode($pokemonApi->Pokemon($response['fourth_pokemon']));
-//     }
-//     if (!empty($response['fifth_pokemon'])) {
-//         $team[] = json_decode($pokemonApi->Pokemon($response['fifth_pokemon']));
-//     }
-//     if (!empty($response['sixth_pokemon'])) {
-//         $team[] = json_decode($pokemonApi->Pokemon($response['sixth_pokemon']));
-//     }
-// }
-
-// var_dump($responses);
-
-
-
-
-
-// Display the teams
-// foreach ($teams as $key => $team) {
-
-//     echo "<pre>";
-//     var_dump(count($team));
-//     echo "</pre>";
-//     // foreach ($team as $key => $pokemon) {
-//     //     // echo "<pre>";
-//     //     // var_dump($pokemon);
-//     //     // echo "</pre>";
-//     // }
-// }
-
-// exit;
-
-
+$types = ['normal', 'fighting', 'flying', 'poison', 'ground', 'rock', 'bug', 'ghost', 'steel', 'fire', 'water', 'grass', 'electric', 'psychic', 'ice', 'dragon', 'dark', 'fairy'];
 
 
 ?>
@@ -91,6 +46,28 @@ $pokemonApi = new PokeApi;
 
     </div>
 
+
+    <div class="border border-danger">
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <ul class="list-unstyled">
+                    <?php foreach ($types as $type) : ?>
+                        <li class="d-flex justify-content-center align-items-center">
+                            <span class="pe-3"><img src="./assets/img/logo_types/<?= $type ?>.png" alt="" width="25" height="25"></span>
+                            <ul class="row justify-content-center list-unstyled">
+                                <li class="tally-mark col-auto"></li>
+                                <li class="tally-mark col-auto"></li>
+                                <li class="tally-mark col-auto"></li>
+                                <li class="tally-mark col-auto"></li>
+                                <li class="tally-mark col-auto"></li>
+                                <li class="tally-mark col-auto"></li>
+                            </ul>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
